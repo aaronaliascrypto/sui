@@ -63,9 +63,9 @@ dependencies = [
 
 [[package]]
 name = "arc-swap"
-version = "1.5.0"
+version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c5d78ce20460b82d3fa150275ed9d55e21064fc7951177baacf86a145c4a4b1f"
+checksum = "983cd8b9d4b02a6dc6ffa557262eb5858a27a0038ffffe21a0f133eaa819a164"
 dependencies = [
  "serde 1.0.140",
 ]
@@ -1037,7 +1037,7 @@ dependencies = [
  "encode_unicode",
  "libc",
  "once_cell",
- "terminal_size",
+ "terminal_size 0.1.17",
  "winapi",
 ]
 
@@ -1994,7 +1994,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "46e245f4c8ec30c6415c56cb132c07e69e74f1942f6b4a4061da748b49f486ca"
 dependencies = [
  "cfg-if 1.0.0",
- "rustix",
+ "rustix 0.34.8",
  "windows-sys 0.30.0",
 ]
 
@@ -2814,6 +2814,12 @@ name = "io-lifetimes"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9448015e586b611e5d322f6703812bbca2f1e709d5773ecd38ddb4e3bb649504"
+
+[[package]]
+name = "io-lifetimes"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "24c3f4eff5495aee4c0399d7b6a0dc2b6e81be84242ffbfcf253ebacccc1d0cb"
 
 [[package]]
 name = "ipnet"
@@ -5662,10 +5668,24 @@ checksum = "2079c267b8394eb529872c3cf92e181c378b41fea36e68130357b52493701d2e"
 dependencies = [
  "bitflags",
  "errno",
- "io-lifetimes",
+ "io-lifetimes 0.6.1",
  "libc",
  "linux-raw-sys",
  "winapi",
+]
+
+[[package]]
+name = "rustix"
+version = "0.35.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d51cc38aa10f6bbb377ed28197aa052aa4e2b762c22be9d3153d01822587e787"
+dependencies = [
+ "bitflags",
+ "errno",
+ "io-lifetimes 0.7.2",
+ "libc",
+ "linux-raw-sys",
+ "windows-sys 0.36.1",
 ]
 
 [[package]]
@@ -7411,6 +7431,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "terminal_size"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8440c860cf79def6164e4a0a983bcc2305d82419177a0e0c71930d049e3ac5a1"
+dependencies = [
+ "rustix 0.35.7",
+ "windows-sys 0.36.1",
+]
+
+[[package]]
 name = "termtree"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8452,9 +8482,9 @@ checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
 
 [[package]]
 name = "wasm-bindgen"
-version = "0.2.81"
+version = "0.2.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c53b543413a17a202f4be280a7e5c62a1c69345f5de525ee64f8cfdbc954994"
+checksum = "fc7652e3f6c4706c8d9cd54832c4a4ccb9b5336e2c3bd154d5cccfbf1c1f5f7d"
 dependencies = [
  "cfg-if 1.0.0",
  "serde 1.0.140",
@@ -8464,13 +8494,13 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-backend"
-version = "0.2.81"
+version = "0.2.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5491a68ab4500fa6b4d726bd67408630c3dbe9c4fe7bda16d5c82a1fd8c7340a"
+checksum = "662cd44805586bd52971b9586b1df85cdbbd9112e4ef4d8f41559c334dc6ac3f"
 dependencies = [
  "bumpalo",
- "lazy_static 1.4.0",
  "log",
+ "once_cell",
  "proc-macro2 1.0.40",
  "quote 1.0.20",
  "syn 1.0.98",
@@ -8491,9 +8521,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro"
-version = "0.2.81"
+version = "0.2.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c441e177922bc58f1e12c022624b6216378e5febc2f0533e41ba443d505b80aa"
+checksum = "b260f13d3012071dfb1512849c033b1925038373aea48ced3012c09df952c602"
 dependencies = [
  "quote 1.0.20",
  "wasm-bindgen-macro-support",
@@ -8501,9 +8531,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro-support"
-version = "0.2.81"
+version = "0.2.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d94ac45fcf608c1f45ef53e748d35660f168490c10b23704c7779ab8f5c3048"
+checksum = "5be8e654bdd9b79216c2929ab90721aa82faf65c48cdf08bdc4e7f51357b80da"
 dependencies = [
  "proc-macro2 1.0.40",
  "quote 1.0.20",
@@ -8514,9 +8544,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-shared"
-version = "0.2.81"
+version = "0.2.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a89911bd99e5f3659ec4acf9c4d93b0a90fe4a2a11f15328472058edc5261be"
+checksum = "6598dd0bd3c7d51095ff6531a5b23e02acdc81804e30d8f07afb77b7215a140a"
 
 [[package]]
 name = "web-sys"
@@ -9296,7 +9326,7 @@ dependencies = [
  "tempfile",
  "tera",
  "termcolor",
- "terminal_size",
+ "terminal_size 0.2.1",
  "termtree",
  "test-fuzz",
  "test-fuzz-internal",
@@ -9727,7 +9757,7 @@ dependencies = [
  "telemetry-subscribers",
  "tempfile",
  "termcolor",
- "terminal_size",
+ "terminal_size 0.1.17",
  "termtree",
  "textwrap 0.11.0",
  "textwrap 0.15.0",
