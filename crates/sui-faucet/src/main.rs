@@ -165,12 +165,12 @@ async fn create_wallet_context() -> Result<WalletContext, anyhow::Error> {
 
     info!(?address, "Sync client states");
     // Sync client to retrieve objects from the network.
-    SuiClientCommands::SyncClientState {
-        address: Some(address),
-    }
-    .execute(&mut context)
-    .await
-    .map_err(|err| anyhow::anyhow!("Fail to sync client state: {}", err))?;
+    // SuiClientCommands::SyncClientState {
+    //     address: Some(address),
+    // }
+    // .execute(&mut context)
+    // .await
+    // .map_err(|err| anyhow::anyhow!("Fail to sync client state: {}", err))?;
     Ok(context)
 }
 

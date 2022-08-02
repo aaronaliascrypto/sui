@@ -41,6 +41,7 @@ impl GenesisConfig {
                 address
             } else {
                 let (address, keypair) = get_key_pair_from_rng(&mut rng);
+                info!("@@@@@@@@@@@ address: {address}");
                 keys.push(keypair);
                 address
             };
@@ -76,7 +77,6 @@ impl GenesisConfig {
                 preload_objects.push(new_object);
             }
         }
-
         Ok((keys, preload_objects))
     }
 }
@@ -129,7 +129,7 @@ fn default_gas_value() -> u64 {
     DEFAULT_GAS_AMOUNT
 }
 
-const DEFAULT_GAS_AMOUNT: u64 = 100000000;
+pub const DEFAULT_GAS_AMOUNT: u64 = 100000000;
 const DEFAULT_NUMBER_OF_AUTHORITIES: usize = 4;
 const DEFAULT_NUMBER_OF_ACCOUNT: usize = 5;
 const DEFAULT_NUMBER_OF_OBJECT_PER_ACCOUNT: usize = 5;

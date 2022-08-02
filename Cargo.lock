@@ -6725,6 +6725,7 @@ dependencies = [
  "test-utils",
  "tokio",
  "tracing",
+ "uuid",
  "workspace-hack 0.1.0",
 ]
 

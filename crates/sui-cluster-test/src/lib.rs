@@ -83,12 +83,15 @@ impl TestContext {
 
     pub async fn setup(options: ClusterTestOpt) -> Result<Self, anyhow::Error> {
         let cluster = ClusterFactory::start(&options).await?;
-        let faucet_url = cluster.faucet_url().map(String::from);
+        // let faucet_url = cluster.faucet_url().map(String::from);
         let wallet_client = WalletClient::new_from_cluster(&cluster).await;
+        // let faucet = FaucetClientFactory::create(&options, &wallet_client);
+        let faucet = FaucetClientFactory::new_from_cluster(&cluster).await;
         Ok(Self {
             cluster,
             client: wallet_client,
-            faucet: FaucetClientFactory::create(&options, faucet_url),
+            // faucet: FaucetClientFactory::create(&options, faucet_url),
+            faucet: faucet,
         })
     }
 

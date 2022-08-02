@@ -3,11 +3,16 @@
 use super::config::{ClusterTestOpt, Env};
 use async_trait::async_trait;
 use clap::*;
+use sui_config::genesis_config::AccountConfig;
 use sui_config::genesis_config::GenesisConfig;
+use sui_config::genesis_config::{ObjectConfig, DEFAULT_GAS_AMOUNT};
 use sui_swarm::memory::Node;
 use sui_swarm::memory::Swarm;
+use sui_types::base_types::ObjectID;
+use sui_types::base_types::SuiAddress;
 use sui_types::crypto::KeypairTraits;
 use sui_types::crypto::{get_key_pair, AccountKeyPair};
+use tracing::info;
 use test_utils::network::{start_rpc_test_network_with_fullnode, TestNetwork};
 
 const DEVNET_FAUCET_ADDR: &str = "https://faucet.devnet.sui.io:443";
@@ -41,9 +46,14 @@ pub trait Cluster {
         Self: Sized;
 
     fn rpc_url(&self) -> &str;
-    fn faucet_url(&self) -> Option<&str>;
     fn fullnode_url(&self) -> &str;
     fn user_key(&self) -> AccountKeyPair;
+    
+    /// Returns faucet url in a remote cluster.
+    fn remote_faucet_url(&self) -> Option<&str>;
+
+    /// Returns faucet key in a local cluster.
+    fn local_faucet_key(&self) -> Option<&AccountKeyPair>;
 }
 
 /// Represents an up and running cluster deployed remotely.
@@ -57,6 +67,7 @@ pub struct RemoteRunningCluster {
 impl Cluster for RemoteRunningCluster {
     async fn start(options: &ClusterTestOpt) -> Result<Self, anyhow::Error> {
         let (rpc_url, faucet_url, fullnode_url) = match options.env {
+        // let (rpc_url, fullnode_url) = match options.env {
             Env::DevNet => (
                 String::from(DEVNET_GATEWAY_ADDR),
                 String::from(DEVNET_FAUCET_ADDR),
@@ -103,11 +114,14 @@ impl Cluster for RemoteRunningCluster {
     fn fullnode_url(&self) -> &str {
         &self.fullnode_url
     }
-    fn faucet_url(&self) -> Option<&str> {
-        Some(&self.faucet_url)
-    }
     fn user_key(&self) -> AccountKeyPair {
         get_key_pair().1
+    }
+    fn remote_faucet_url(&self) -> Option<&str> {
+        Some(&self.faucet_url)
+    }
+    fn local_faucet_key(&self) -> Option<&AccountKeyPair> {
+        None
     }
 }
 
@@ -115,6 +129,7 @@ impl Cluster for RemoteRunningCluster {
 pub struct LocalNewCluster {
     test_network: TestNetwork,
     fullnode_url: String,
+    faucet_key: AccountKeyPair,
 }
 
 impl LocalNewCluster {
@@ -126,11 +141,38 @@ impl LocalNewCluster {
 #[async_trait]
 impl Cluster for LocalNewCluster {
     async fn start(_options: &ClusterTestOpt) -> Result<Self, anyhow::Error> {
-        let genesis_config = GenesisConfig::for_local_testing();
+        // let (faucet_address, faucet_key) = get_key_pair();
 
-        let test_network = start_rpc_test_network_with_fullnode(Some(genesis_config), 1)
+        // let objects = vec![ObjectConfig{
+        //     object_id: ObjectID::random(),
+        //     gas_value: DEFAULT_GAS_AMOUNT,
+        // }; 100];
+
+        // let accounts = vec![AccountConfig {
+        //     address: Some(faucet_address),
+        //     gas_objects: objects,
+        //     gas_object_ranges: Some(Vec::new()),
+        // }];
+        // let genesis_config = GenesisConfig {
+        //     accounts,
+        //     ..Default::default()
+        // };
+        let genesis_config = GenesisConfig::custom_genesis(4, 4, 2);
+        info!(?genesis_config.accounts, "genesis account");
+
+        let mut test_network = start_rpc_test_network_with_fullnode(Some(genesis_config), 1)
             .await
             .unwrap_or_else(|e| panic!("Failed to start a local network, e: {e}"));
+
+        // let user_key = test_network.network.config().account_keys[0].copy();
+        // let user_address = SuiAddress::from(user_key.public());
+        // info!(?user_address, "user_address");
+
+        // Peel off one key for the local faucet
+        let faucet_key = test_network.network.config_mut().account_keys.swap_remove(0);
+        let faucet_address = SuiAddress::from(faucet_key.public());
+        info!(?faucet_address, "faucet_address");
+
         let fullnode: &Node = test_network
             .network
             .fullnodes()
@@ -145,6 +187,7 @@ impl Cluster for LocalNewCluster {
         Ok(Self {
             test_network,
             fullnode_url,
+            faucet_key,
         })
     }
 
@@ -156,12 +199,15 @@ impl Cluster for LocalNewCluster {
         &self.fullnode_url
     }
 
-    // For now, a local cluster does not have faucet
-    fn faucet_url(&self) -> Option<&str> {
+    fn user_key(&self) -> AccountKeyPair {
+        self.swarm().config().account_keys[0].copy()
+    }
+
+    fn remote_faucet_url(&self) -> Option<&str> {
         None
     }
 
-    fn user_key(&self) -> AccountKeyPair {
-        self.swarm().config().account_keys[0].copy()
+    fn local_faucet_key(&self) -> Option<&AccountKeyPair> {
+        Some(&self.faucet_key)
     }
 }
